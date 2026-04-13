@@ -1,0 +1,19 @@
+---
+title: "Measles Cases - Final Project"
+author: "Aurora Sauereisen"
+format: 
+  html:
+    embed-resources: true
+---
+The purpose of this final project is to explore global measles cases, and showcase data storytelling abilities
+
+Data Chosen from TidyTuesday GitHub. 
+Title & Post date: 'Measles cases across the world', 2025-06-24
+Link: (https://github.com/rfordatascience/tidytuesday/tree/main/data/2025/2025-06-24)
+
+*Read in the data:*
+```{r}
+cases_month <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-06-24/cases_month.csv')
+cases_year <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-06-24/cases_year.csv')
+```
+
