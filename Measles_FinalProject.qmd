@@ -10,11 +10,80 @@ The purpose of this final project is to explore global measles cases, and showca
 Data Chosen from TidyTuesday GitHub. 
 Title & Post date: 'Measles cases across the world', 2025-06-24
 Link: (https://github.com/rfordatascience/tidytuesday/tree/main/data/2025/2025-06-24)
+Data is measel case counts from 2012 to 2025
 
 *Read in the data:*
 ```{r}
 cases_month <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-06-24/cases_month.csv')
 cases_year <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-06-24/cases_year.csv')
+
+
+#Having issues saving said data to my computer itself. 
+write_csv(cases_month, "C:\Users\sauer\OneDrive\Documents\St. Lawrence University\2026\MeaslesCases_334proj\data")
+
 ```
 
-Purpose: Visualize by country and timeline the severity and spread of measles
+*Purpose: Visualize by country and timeline the severity and spread of measles*
+Questions to explore:
+ - For each region, what season had the highest # measels cases? 
+ - Are we able to reveal differences in healthcare quality between regions/countries, based on observing their ratios of laboratory to suspected- confirmed cases of disease? (Does the ratio of laboratory-confirmed cases to total cases reveal differences in healthcare capacity across countries?)
+ - Is there a trend in measles vs rubella prominence? Does this show up regionally or by country, suggesting environmental or public health influencers?
+
+
+ 
+ 
+ 
+# Exploring Measles over the Years
+Line plot: #measles vs year, facet by region, line by country. Leaflet plot to show # cases at that time point based on cursor hover
+Second plot: #measles should be the incidence rate (so country populations in comparison can be considered) Then talk about burden of disease on countries. Like even though they have small numbers, thats a large portion of their population, bringing to light the burden/impact on the country. 
+
+To simplify, looking at top 15 countries with the highest rates across the years. 
+```{r}
+#From all the years, take each country's highest count.
+# Then only take the the top 10 countries with their record high counts
+library(tidyverse)
+library(dplyr)
+
+#Top 10 countries that have had the record highest total measles cases during the span of 2012 - 2025:
+top10_yearspan_measles <-
+  cases_year |>
+  group_by(country) |>
+  arrange(desc(measles_total)) |>
+  slice(1) |>
+  ungroup(country) |>
+  arrange(desc(measles_total)) |>
+  slice(1:10) |>
+  distinct(country) |> # Now take the names of just those top countries
+  pull(country)
+
+# Filter the dataset to only include the top historical measles countries, and the USA for comparison
+top10nUSA_measles_tot <-
+  cases_year |>
+  filter(country %in% top10_yearspan_measles | country == "United States of America")
+```
+
+Plot:
+```{r}
+library(ggplot2)
+library(plotly)
+ggplot(data = top10nUSA_measles_tot, aes(x = year, y = measles_total)) +
+  #facet_wrap(~region) +
+  geom_line(aes(color = country), linewidth = 1)
+
+unique(cases_year$measles_incidence_rate_per_1000000_total_population)
+
+
+#reference code for plotly:
+lineplot1 <- 
+  ggplot(data = atp_time, aes(x = ranking_date, y = points, label = rank)) +
+  geom_line() +
+  theme_minimal() +
+  labs(title = "Ranking Points for Roger Federer") +
+  lims(y = c(0, NA))
+  
+ggplotly(lineplot1, tooltip = "label")
+```
+
+
+# Measles vs Rubella: Trends in co-existence(?)
+In the top countries with the highest measles prevalence, how does their rubella count compare to their measles count? 
