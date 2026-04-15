@@ -37,7 +37,7 @@ Questions to explore:
 Line plot: #measles vs year, facet by region, line by country. Leaflet plot to show # cases at that time point based on cursor hover
 Second plot: #measles should be the incidence rate (so country populations in comparison can be considered) Then talk about burden of disease on countries. Like even though they have small numbers, that's a large portion of their population, bringing to light the burden/impact on the country. 
 
-To simplify, looking at top 15 countries with the highest rates across the years.  
+To simplify, looking at top 15 countries with the highest rates across the years:  
 ```{r}
 #From all the years, take each country's highest count.
 # Then only take the the top 10 countries with their record high counts
