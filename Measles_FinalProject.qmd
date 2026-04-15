@@ -35,9 +35,9 @@ Questions to explore:
  
 # Exploring Measles over the Years
 Line plot: #measles vs year, facet by region, line by country. Leaflet plot to show # cases at that time point based on cursor hover
-Second plot: #measles should be the incidence rate (so country populations in comparison can be considered) Then talk about burden of disease on countries. Like even though they have small numbers, thats a large portion of their population, bringing to light the burden/impact on the country. 
+Second plot: #measles should be the incidence rate (so country populations in comparison can be considered) Then talk about burden of disease on countries. Like even though they have small numbers, that's a large portion of their population, bringing to light the burden/impact on the country. 
 
-To simplify, looking at top 15 countries with the highest rates across the years. 
+To simplify, looking at top 15 countries with the highest rates across the years.  
 ```{r}
 #From all the years, take each country's highest count.
 # Then only take the the top 10 countries with their record high counts
@@ -66,23 +66,26 @@ Plot:
 ```{r}
 library(ggplot2)
 library(plotly)
+top10measlesN_plot <-
 ggplot(data = top10nUSA_measles_tot, aes(x = year, y = measles_total)) +
   #facet_wrap(~region) +
-  geom_line(aes(color = country), linewidth = 1)
+  geom_line(aes(color = country), linewidth = 1) +
+  theme_minimal()
 
-unique(cases_year$measles_incidence_rate_per_1000000_total_population)
+ggplotly(top10measlesN_plot, tooltip = c("color", "x", "y"))
+# ^can't get it to order the way I'd like?
 
 
-#reference code for plotly:
-lineplot1 <- 
-  ggplot(data = atp_time, aes(x = ranking_date, y = points, label = rank)) +
-  geom_line() +
-  theme_minimal() +
-  labs(title = "Ranking Points for Roger Federer") +
-  lims(y = c(0, NA))
-  
-ggplotly(lineplot1, tooltip = "label")
+#Looking at Incidence rate:
+top10measlesI_plot <-
+ggplot(data = top10nUSA_measles_tot, aes(x = year, y = measles_incidence_rate_per_1000000_total_population)) +
+  #facet_wrap(~region) +
+  geom_line(aes(color = country), linewidth = 1) +
+  theme_minimal()
+
+ggplotly(top10measlesI_plot, tooltip = c("color", "x", "y"))
 ```
+Between these two plots, we see some differences between Measeles count versus the incidence rate of the disease in eachcountry, which gives insight as to the effect of measles presence on the country hollistically. *PLEASE CONTINUE HERE*
 
 
 # Measles vs Rubella: Trends in co-existence(?)
