@@ -5,12 +5,12 @@ format:
   html:
     embed-resources: true
 ---
-The purpose of this final project is to explore global measles cases, and showcase data story telling abilities
+The purpose of this final project is to explore a dataset of choice/interest and showcase data story telling abilities.
 
 Data Chosen from TidyTuesday GitHub. 
 Title & Post date: 'Measles cases across the world', 2025-06-24
 Link: (https://github.com/rfordatascience/tidytuesday/tree/main/data/2025/2025-06-24)
-Data is measel case counts from 2012 to 2025
+Data is measle case counts from 2012 to 2025
 
 *Read in the data:*
 ```{r}
@@ -25,13 +25,11 @@ write_csv(cases_month, "C:\Users\sauer\OneDrive\Documents\St. Lawrence Universit
 
 *Purpose: Visualize by country and timeline the severity and spread of measles*
 Questions to explore:
- - For each region, what season had the highest # measels cases? 
+ - For each region, what season had the highest # measles cases? 
  - Are we able to reveal differences in healthcare quality between regions/countries, based on observing their ratios of laboratory to suspected- confirmed cases of disease? (Does the ratio of laboratory-confirmed cases to total cases reveal differences in healthcare capacity across countries?)
  - Is there a trend in measles vs rubella prominence? Does this show up regionally or by country, suggesting environmental or public health influencers?
 
 
- 
- 
  
 # Exploring Measles over the Years
 Line plot: #measles vs year, facet by region, line by country. Leaflet plot to show # cases at that time point based on cursor hover
@@ -39,8 +37,6 @@ Second plot: #measles should be the incidence rate (so country populations in co
 
 To simplify, looking at top 15 countries with the highest rates across the years:  
 ```{r}
-#From all the years, take each country's highest count.
-# Then only take the the top 10 countries with their record high counts
 library(tidyverse)
 library(dplyr)
 
@@ -52,8 +48,8 @@ top10_yearspan_measles <-
   slice(1) |>
   ungroup(country) |>
   arrange(desc(measles_total)) |>
-  slice(1:10) |>
-  distinct(country) |> # Now take the names of just those top countries
+  slice(1:10) |>  # Now take the names of just those top countries:
+  distinct(country) |> 
   pull(country)
 
 # Filter the dataset to only include the top historical measles countries, and the USA for comparison
@@ -85,8 +81,51 @@ ggplot(data = top10nUSA_measles_tot, aes(x = year, y = measles_incidence_rate_pe
 
 ggplotly(top10measlesI_plot, tooltip = c("color", "x", "y"))
 ```
-Between these two plots, we see some differences between Measeles count versus the incidence rate of the disease in eachcountry, which gives insight as to the effect of measles presence on the country hollistically. *PLEASE CONTINUE HERE*
+Between these two plots, we see some differences between Measles count versus the incidence rate of the disease in eachcountry, which gives insight as to the effect of measles presence on the country holistically. *PLEASE CONTINUE HERE*
+
+In comparison to the top 10 countries with the highest counts of measles, the United States seems to pale in comparison. But the reason this dataset was posted on GitHub's TidyTuesday repository was to mirror the awareness campaigns of the rising rates of measles in the United states. A quick glimpse of the US's measles counts and incidence rate captures this concerning return to rising measles rates after Covid.
+ - *Important note*, after investigating US measles incidence rate over time, I identified what I believe is a miscalculated incidence rate value for the year 2025. While my hand calculation for the 2025 incidence rate reveals a rate of approximately 3.4 cases of measles per 100,000 people, the dataset reports a value of approximately 8 cases of measles per 100,000 people. My hand calculation results mirror the rest of the values in the dataset except for this one 2025 value. I'm unsure of why there is a mismatch, but moving forward *it is best to view incidence rate visualizations with hesitancy*.  
+
+measles_incidence_rate_per_1000000_total_population
+```{r}
+cases_year_USA <- 
+  cases_year |>
+  filter(country == "United States of America") |>
+  mutate(hand_incidenceR_measles = (measles_total / total_population)*1000000) |>
+  select(hand_incidenceR_measles, measles_incidence_rate_per_1000000_total_population, year, 
+         annualized_population_most_recent_year_only, total_population, everything())
+# QUESTION: Is it right to use the annualized population for 2025 here in incidence rate calc?
+  
+  
+measlesUSA_plot <-
+ggplot(data = cases_year_USA, aes(x = year, y = measles_incidence_rate_per_1000000_total_population, label1 = total_population, label2 = measles_total)) +
+  geom_line(linewidth = 1) +
+  geom_point(aes(x = year, y = hand_incidenceR_measles), color = "purple") +
+  theme_minimal()
+
+ggplotly(measlesUSA_plot, tooltip = c("y", "label1", "label2"))
+```
+Something critical to note here: While investigating US incidence rates, I identified that there's an incrorrect value for 2025 that gives a false interpretation of a drastic increase in cases. Moving forward in the data, I will either hand-calculate. 
+
+Something else to note is the collective drop in measles cases in all countries shortly following the year 2020. This is likely due to the Covid-19 pandemic, where social distancing and extra sanitation likely limited the spread of measles in addition to Covid-19 during that time period. However, another possible reason behind the drop in cases could be from under reporting; as Covid-19 was at the forefront of health professionals and the media's attention, measles cases could have been triaged in data collection or not brought in for medical diagnosis. 
 
 
 # Measles vs Rubella: Trends in co-existence(?)
 In the top countries with the highest measles prevalence, how does their rubella count compare to their measles count? 
+Pick a year and boxplots? 
+```{r}
+#pivot the data
+cases_year |>
+  select(region, country, year, total_population, measles_total, rubella_total) |>
+  pivot_longer(cols = c(measles_total, rubella_total),
+             names_to = "disease", values_to = "total_cases") |>
+  select(total_cases, disease, everything()) |>
+  #finish this
+```
+
+
+
+# Conclusions
+
+# Notes:
+-> **Incorrect Incidence rate data**. While investigating US measles incidence rate over time (`measles_incidence_rate_per_1000000_total_population` variable), I discovered that the 2025 value was incorrect. In hand calculating the yearly incidence rates for the US, all were correct except the 2025 value. Unsure of how the data authors calculated their values to identify the calculation that produced it, I chose not to use the current column for measles incidence rate in the 'case_year' data set.  
