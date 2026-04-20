@@ -7,10 +7,8 @@ format:
 ---
 The purpose of this final project is to explore a dataset of choice/interest and showcase data story telling abilities.
 
-Data Chosen from TidyTuesday GitHub. 
-Title & Post date: 'Measles cases across the world', 2025-06-24
-Link: (https://github.com/rfordatascience/tidytuesday/tree/main/data/2025/2025-06-24)
-Data is measle case counts from 2012 to 2025
+# Introduction
+It begins with __. 
 
 *Read in the data:*
 ```{r}
@@ -81,12 +79,13 @@ ggplot(data = top10nUSA_measles_tot, aes(x = year, y = measles_incidence_rate_pe
 
 ggplotly(top10measlesI_plot, tooltip = c("color", "x", "y"))
 ```
-Between these two plots, we see some differences between Measles count versus the incidence rate of the disease in eachcountry, which gives insight as to the effect of measles presence on the country holistically. *PLEASE CONTINUE HERE*
+Between these two plots, we see some differences between Measles count versus the incidence rate of the disease in each country, which gives insight as to the effect of measles presence on the country holistically. *PLEASE CONTINUE HERE*
 
-In comparison to the top 10 countries with the highest counts of measles, the United States seems to pale in comparison. But the reason this dataset was posted on GitHub's TidyTuesday repository was to mirror the awareness campaigns of the rising rates of measles in the United states. A quick glimpse of the US's measles counts and incidence rate captures this concerning return to rising measles rates after Covid.
- - *Important note*, after investigating US measles incidence rate over time, I identified what I believe is a miscalculated incidence rate value for the year 2025. While my hand calculation for the 2025 incidence rate reveals a rate of approximately 3.4 cases of measles per 100,000 people, the dataset reports a value of approximately 8 cases of measles per 100,000 people. My hand calculation results mirror the rest of the values in the dataset except for this one 2025 value. I'm unsure of why there is a mismatch, but moving forward *it is best to view incidence rate visualizations with hesitancy*.  
+Something else to note is the collective drop in measles cases in all countries shortly following the year 2020. This is likely due to the Covid-19 pandemic, where social distancing and extra sanitation likely limited the spread of measles in addition to Covid-19 during that time period. However, another possible reason behind the drop in cases could be from under reporting; as Covid-19 was at the forefront of health professionals and the media's attention, measles cases could have been triaged in data collection or not brought in for medical diagnosis. As I do not have complementary data on hand or expertise to discern which (or neither) of these ideas are responsible for this observation, I will not report in confidence a reason for this trend. 
 
-measles_incidence_rate_per_1000000_total_population
+# Measles & the U.S.:
+In comparison to the top 10 countries with the highest counts of measles, the United States seems to pale in comparison. But the reason this data set was posted on GitHub's TidyTuesday repository was to mirror the awareness campaigns of the rising rates of measles in the United states. A quick glimpse of the US's measles counts and incidence rate captures this concerning return to rising measles rates after Covid.
+
 ```{r}
 cases_year_USA <- 
   cases_year |>
@@ -94,7 +93,6 @@ cases_year_USA <-
   mutate(hand_incidenceR_measles = (measles_total / total_population)*1000000) |>
   select(hand_incidenceR_measles, measles_incidence_rate_per_1000000_total_population, year, 
          annualized_population_most_recent_year_only, total_population, everything())
-# QUESTION: Is it right to use the annualized population for 2025 here in incidence rate calc?
   
   
 measlesUSA_plot <-
@@ -105,13 +103,20 @@ ggplot(data = cases_year_USA, aes(x = year, y = measles_incidence_rate_per_10000
 
 ggplotly(measlesUSA_plot, tooltip = c("y", "label1", "label2"))
 ```
-Something critical to note here: While investigating US incidence rates, I identified that there's an incrorrect value for 2025 that gives a false interpretation of a drastic increase in cases. Moving forward in the data, I will either hand-calculate. 
-
-Something else to note is the collective drop in measles cases in all countries shortly following the year 2020. This is likely due to the Covid-19 pandemic, where social distancing and extra sanitation likely limited the spread of measles in addition to Covid-19 during that time period. However, another possible reason behind the drop in cases could be from under reporting; as Covid-19 was at the forefront of health professionals and the media's attention, measles cases could have been triaged in data collection or not brought in for medical diagnosis. 
+*A critical adjustment here:* While investigating US incidence rates, I identified that there's an unusual value for 2025 that gives a false interpretation of a drastic increase in cases. While my hand calculation for the 2025 incidence rate reveals a rate of approximately 3.4 cases of measles per 100,000 people, the dataset reports a value of approximately 8 cases of measles per 100,000 people. My hand calculation results mirror the rest of the values in the data set except for this one 2025 value. \
+    This is shown in the graph as the black line with data-original values, and purple plotted points to represent my hand calculations to check it. The difference is due to the original data using the annualized population opposed to total population for only the year 2025. To limit misinterpretations and maintain consistency across reported values, all visualizations in this report will use my hand-calculated incidence rate values (the purple points) that not utilize the country-wide 2025 annualized population values.  \
+  \
+Regardless of the 2025 incidence rate value, this plotly line plot delivers the same message; the return in Measles cases after the 2020 pandemic like the rest of the globe. However, just how bad is measles getting in the US? 
+\
+The data set currently visualized here is from a github repository dating from April 24, 2025, about a year ago from now, and only reports on country-level counts. While it warns of an increasing trend after Covid-19, it doesn't capture the increasing concern since that date, and at a global level at that. I've pulled here supplementary data from the CDC to get a glimpse at the more current case counts and rates of measles cases to gain a better understanding of the U.S.'s current standing with the disease. 
+# Current Glimpse: 2025-26 U.S. Measles Cases
+..> also show vaccine counts? 
+..> do a map of USA states with diverging color scale based on an increase in counts or decrease, and by how much from the previous year. Also a month by month line plot? Maybe separate lines by region of the US? 
 
 
 # Measles vs Rubella: Trends in co-existence(?)
-In the top countries with the highest measles prevalence, how does their rubella count compare to their measles count? 
+While measles are known for ___ symptoms, rubella compares in the sense of ____. 
+In the top countries with the highest measles prevalence, how does their rubella count compare to their measles count? The gitHub data set includes rubella counts in addition to measles. Taking advantage of the extra information, lets visualize: 
 Pick a year and boxplots? 
 ```{r}
 #pivot the data
@@ -129,3 +134,15 @@ cases_year |>
 
 # Notes:
 -> **Incorrect Incidence rate data**. While investigating US measles incidence rate over time (`measles_incidence_rate_per_1000000_total_population` variable), I discovered that the 2025 value was incorrect. In hand calculating the yearly incidence rates for the US, all were correct except the 2025 value. Unsure of how the data authors calculated their values to identify the calculation that produced it, I chose not to use the current column for measles incidence rate in the 'case_year' data set.  
+
+## Sources:
+**Main data set explored:** \
+'Measles cases across the world', posted 2025-06-24  \
+Chosen from TidyTuesday GitHub repository. Contains information on Measles and Rubella cases.  \
+Data set temporal range: 2012 - 2025 \
+Link: (https://github.com/rfordatascience/tidytuesday/tree/main/data/2025/2025-06-24)  \
+ \
+ \
+**Measles Supplementary Information:** \
+Mayo Clinic Measles - Symptoms & Causes page
+Link: (https://www.mayoclinic.org/diseases-conditions/measles/symptoms-causes/syc-20374857)
