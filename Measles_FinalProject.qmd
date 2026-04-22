@@ -10,7 +10,12 @@ The purpose of this final project is to explore a dataset of choice/interest and
 # Introduction
 It begins with a rash on the face, spreading to the chest and back before the rest of the body, combined with fever (up to 105F), a dry cough, runny nose, and conjunctivitis. Highly contagious through airborne and physical contact routes, people of any age can contract Measles. While children are more often exposed to & contract Measles, in most cases a patient is bedridden for 7-10 days. For the immune compromised and those with complications though, this can be a life threatening disease and needs medical monitoring to limit life-threatening complications. However, with the first vaccines developed and licensed in 1963, the U.S. all but declared the Measles virus eliminated in the U.S. by the year 2000. \
 \
-But as current media campaigns warn, Measles has all but renewed it's presence in the U.S.; -with alarming foothold. This blog entry aims to explore a data set sourced from the GitHub repository 'TidyTuesday' covering global Measles case data. Exploring global performance in addition to examining U.S. specific rates, this blog will aim to visualize Measles's presence in the world.
+But as current media campaigns warn, Measles has all but renewed it's presence in the U.S.; -with alarming foothold. This blog entry aims to explore a data set sourced from the GitHub repository 'TidyTuesday' covering global Measles case data. Exploring global performance in addition to examining U.S. specific rates, this blog will aim to visualize Measles's presence in the world. \
+**Blog Goals:**
+- What are the top 10 countries with the highest record cases of Measles? How does the USA compare to these countries?
+- Throughout the data's timeline of measles counts, is there any evidence of historical impacts? 
+- Are we able to reveal differences in healthcare quality between regions/countries, based on observing their ratios of laboratory to suspected- confirmed cases of disease? (Does the ratio of laboratory-confirmed cases to total cases reveal differences in healthcare capacity across countries?)
+ - Is there a trend in measles vs rubella prominence? Does this show up regionally or by country, suggesting environmental or public health influencers?
 
 
 *Read in the data:*
