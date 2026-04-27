@@ -130,12 +130,18 @@ In the top countries with the highest measles prevalence, how does their rubella
 Pick a year and boxplots? 
 ```{r}
 #pivot the data
-cases_year |>
+rubVmeas_USAdata <-
+  cases_year |>
   select(region, country, year, total_population, measles_total, rubella_total) |>
   pivot_longer(cols = c(measles_total, rubella_total),
              names_to = "disease", values_to = "total_cases") |>
   select(total_cases, disease, everything()) |>
-  #finish this
+  filter(country == "Unites States of America")
+
+ggplot(data = rubVmeas_USAdata, aes(x = year, y = total_cases, color = disease, label1 = total_population)) +
+  geom_line(linewidth = 1) +
+  theme_minimal()
+#needs finishing
 ```
 
 
