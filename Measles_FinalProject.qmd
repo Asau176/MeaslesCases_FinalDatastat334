@@ -87,7 +87,7 @@ ggplot(data = top10nUSA_measles_tot, aes(x = year, y = hand_incidenceR_measles))
 ggplotly(top10measlesI_plot, tooltip = c("color", "x", "y"))
 ```
 Between these two plots, we see some differences between Measles count versus the incidence rate of the disease in each country. The *incidence rate* of Measles in the second graph displays the country's case count while accounting for the overall population. While the incidence rate visualization gives a better understanding as to how the disease may be impacting the country overall, it also seems to water down or downplay the fluctuation and presence of Measles.  \
-Madagascar in particular seems to be heavily affected by Measles, meanwhile many other countries trail and fluctuate at case counts about half of Madagascar's. 
+Madagascar in particular seems to be heavily affected by Measles, meanwhile many other countries trail and fluctuate at case counts about half of Madagascar's. When looking at Measles incidence rate though, Madagascar seems to still trump the other rates in 2019 by roughly 6 fold. The Philippines is also a notable country, as we can see that while other countries have ebbed and flowed in a sense, this country has several reoccurring peaks with similar case counts. 
 *PLEASE CONTINUE HERE*
 
 Something else to note is the collective drop in measles cases in all countries shortly following the year 2020. This is likely due to the Covid-19 pandemic, where social distancing and extra sanitation likely limited the spread of measles in addition to Covid-19 during that time period. However, another possible reason behind the drop in cases could be from under reporting; as Covid-19 was at the forefront of health professionals and the media's attention, measles cases could have been triaged in data collection or not brought in for medical diagnosis. As I do not have complementary data on hand or expertise to discern which (or neither) of these ideas are responsible for this observation, I will not report in confidence a reason for this trend. \
@@ -125,25 +125,49 @@ The data set currently visualized here is from a github repository dating from A
 
 
 # Measles vs Rubella: Trends in co-existence(?)
-While measles are known for ___ symptoms, rubella compares in the sense of ____. 
-In the top countries with the highest measles prevalence, how does their rubella count compare to their measles count? The gitHub data set includes rubella counts in addition to measles. Taking advantage of the extra information, lets visualize: \
+While measles is known as a more classic disease or sickness, rubella compares in a similar sense of symptoms but gains its notoriety for its harmful impact on unborn children. If a woman is to contract rubella during pregnancy, the child is likely to be born with defects, known as ____ syndrome.  \
+While there is data on most countries, I'll only be focusing on the US rates and the Philipines, for relatability and since the philipines seem to have the most frequent spikes in Measles cases. In the top countries with the highest measles prevalence, how does their rubella count compare to their measles count? The gitHub data set includes rubella counts in addition to measles. Taking advantage of the extra information, lets visualize: \
 Pick a year and boxplots? 
 ```{r}
 #pivot the data
-rubVmeas_USAdata <-
+rubVmeas_USAPhipp <-
   cases_year |>
   select(region, country, year, total_population, measles_total, rubella_total) |>
   pivot_longer(cols = c(measles_total, rubella_total),
              names_to = "disease", values_to = "total_cases") |>
   select(total_cases, disease, everything()) |>
-  filter(country == "Unites States of America")
+  filter(country == "United States of America" | country == "Philippines")
+
+unique(rubVmeas_USAPhipp$country)
 
 ggplot(data = rubVmeas_USAdata, aes(x = year, y = total_cases, color = disease, label1 = total_population)) +
   geom_line(linewidth = 1) +
+  #facet_wrap(~ country) +
   theme_minimal()
 #needs finishing
-```
 
+
+tester_USAphipp<- 
+  cases_year |>
+  filter(country == "United States of America" | country == "Philippines")
+
+USAphipp_rubellaplot <-
+  ggplot(data = tester_USAphipp, aes(x= year, y = rubella_incidence_rate_per_1000000_total_population, label1 = total_population, label2 = rubella_total)) +
+  geom_line(color = "purple")+
+  facet_wrap(~country) +
+  labs(caption = "Rubella Incidence Rate - 2012 through spring of 2015")
+
+USAphipp_measlesplot <-
+  ggplot(data = tester_USAphipp, aes(x= year, y = measles_incidence_rate_per_1000000_total_population, label1 = total_population, label2 = measles_total)) +
+  geom_line(color = "purple")+
+  facet_wrap(~country) +
+  labs(caption = "Measles Incidence Rate - 2012 through spring of 2015")
+
+ggplotly(USAphipp_rubellaplot, tooltip = c("y", "label1", "label2"))
+ggplotly(USAphipp_measlesplot, tooltip = c("y", "label1", "label2"))
+
+```
+While The Philippeans are displaying the peaks in measles that we saw earlier, we can see that trends in Rubella cases aren't as mirrored.
 
 
 # Conclusions
