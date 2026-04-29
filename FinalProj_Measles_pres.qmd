@@ -87,13 +87,119 @@ ggplot(data = top10nUSA_measles_tot, aes(x = year, y = hand_incidenceR_measles))
 ggplotly(top10measlesI_plot, tooltip = c("color", "x", "y"))
 ```
 
+
 # Over Time: Global Increase? 
 ```{r}
 #| message: false
 #| warning: false
 #| include: false
 world_map <- map_data("world")
-cases_1year <- #filter to start, fix country names to show up on map
+cases_2012year <- #filter to start, fix country names to show up on map
+  cases_year |>
+  filter(year == 2012) |>
+  mutate(country = if_else(country == "United States of America", 
+                           true = "USA", 
+                           false = country)) |>
+  mutate(country = if_else(country == "Russian Federation", 
+                           true = "Russia", 
+                           false = country)) |>
+  mutate(country = if_else(country == "Venezuela (Bolivarian Republic of)", 
+                           true = "Venezuela", 
+                           false = country)) |>
+  mutate(country = if_else(country == "Iran (Islamic Republic of)", 
+                           true = "Iran", 
+                           false = country)) |>
+  mutate(country = if_else(country == "Democratic People's Republic of Korea", 
+                           true = "North Korea", 
+                           false = country)) |>
+  mutate(country = if_else(country == "Bolivia (Plurinational State of)", 
+                           true = "Bolivia", 
+                           false = country)) |>
+  mutate(country = if_else(country == "United Kingdom of Great Britain and Northern Ireland", 
+                           true = "UK", 
+                           false = country)) |>
+  mutate(country = if_else(country == "Netherlands (Kingdom of the)", 
+                           true = "Netherlands", 
+                           false = country)) 
+
+cases_year |>
+  filter(year == 2012) |>
+  filter(country == "United States of America")
+
+#join the datasets:
+full_worldMeasles <- left_join(world_map, cases_2012year, 
+                           join_by(region == country))
+```
+```{r}
+#plot the map:
+ggplot(data = full_worldMeasles, aes(x = long, y = lat, 
+                                 group = group)) +
+  geom_polygon(aes(fill=measles_total)) +
+  scale_fill_viridis_c() +
+  coord_map(projection = "mercator") +
+  xlim(c(-180,180)) +
+  labs(title = "Cases of Measles in 2012")
+```
+
+# Over Time: Global Increase? 
+```{r}
+#| message: false
+#| warning: false
+#| include: false
+world_map <- map_data("world")
+cases_2018year <- #filter to start, fix country names to show up on map
+  cases_year |>
+  filter(year == 2018) |>
+  mutate(country = if_else(country == "United States of America", 
+                           true = "USA", 
+                           false = country)) |>
+  mutate(country = if_else(country == "Russian Federation", 
+                           true = "Russia", 
+                           false = country)) |>
+  mutate(country = if_else(country == "Venezuela (Bolivarian Republic of)", 
+                           true = "Venezuela", 
+                           false = country)) |>
+  mutate(country = if_else(country == "Iran (Islamic Republic of)", 
+                           true = "Iran", 
+                           false = country)) |>
+  mutate(country = if_else(country == "Democratic People's Republic of Korea", 
+                           true = "North Korea", 
+                           false = country)) |>
+  mutate(country = if_else(country == "Bolivia (Plurinational State of)", 
+                           true = "Bolivia", 
+                           false = country)) |>
+  mutate(country = if_else(country == "United Kingdom of Great Britain and Northern Ireland", 
+                           true = "UK", 
+                           false = country)) |>
+  mutate(country = if_else(country == "Netherlands (Kingdom of the)", 
+                           true = "Netherlands", 
+                           false = country)) 
+
+
+#join the datasets:
+full_worldMeasles <- left_join(world_map, cases_2018year, 
+                           join_by(region == country))
+```
+```{r}
+#plot the map:
+ggplot(data = full_worldMeasles, aes(x = long, y = lat, 
+                                 group = group)) +
+  geom_polygon(aes(fill=measles_total)) +
+  scale_fill_viridis_c() +
+  coord_map(projection = "mercator") +
+  xlim(c(-180,180)) +
+  labs(title = "Cases of Measles in 2018")
+```
+
+
+
+# Over Time: Global Increase? 
+```{r}
+#| message: false
+#| warning: false
+#| include: false
+world_map <- map_data("world")
+cases_2024year <- #filter to start, fix country names to show up on map
   cases_year |>
   filter(year == 2024) |>
   mutate(country = if_else(country == "United States of America", 
@@ -123,7 +229,7 @@ cases_1year <- #filter to start, fix country names to show up on map
 
 
 #join the datasets:
-full_worldMeasles <- left_join(world_map, cases_1year, 
+full_worldMeasles <- left_join(world_map, cases_2024year, 
                            join_by(region == country))
 ```
 ```{r}
