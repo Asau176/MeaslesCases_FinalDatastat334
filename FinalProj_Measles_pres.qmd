@@ -1,0 +1,140 @@
+---
+title: "FinalProj_Measles_pres"
+author: "Rory Sauereisen"
+format: revealjs
+editor: visual
+---
+
+```{r}
+#| include: false
+#| message: false
+#| warning: false
+##load in data and libraries here w output == false, so not included in slides
+#Reproducible -so it needs library and data load-ins 
+#for presentations, increase axis sizes! (will look odd in window, but great on slides)
+# theme_minimal(base_size = 24)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(plotly)
+library(here)
+cases_month <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-06-24/cases_month.csv')
+cases_year <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-06-24/cases_year.csv')
+```
+
+## Data Introduction
+
+-   TidyTuesday: "Measles cases across the world"
+-   Measles cases rising
+
+```{r}
+(cases_year |>
+  filter(country == "United States of America") |>
+  filter(year == 2025 | year == 2024) |>
+  select(country, year, total_population, measles_total, measles_incidence_rate_per_1000000_total_population, rubella_total, rubella_incidence_rate_per_1000000_total_population))
+```
+
+## Question(s) of Interest
+- What are the top 10 countries with the highest record cases of Measles? How does the USA compare to these countries?
+-   ^ Throughout the data's timeline of measles counts, is there any evidence of historical impacts? 
+- Is there a visible global rise in Measles cases since 2012?
+
+
+## Top 10 Countries With the Highest Measles Counts
+```{r}
+#| message: false
+#| warning: false
+#| include: false
+top10_yearspan_measles <-
+  cases_year |>
+  group_by(country) |>
+  arrange(desc(measles_total)) |>
+  slice(1) |>
+  ungroup(country) |>
+  arrange(desc(measles_total)) |>
+  slice(1:10) |>  # Now take the names of just those top countries:
+  distinct(country) |> 
+  pull(country)
+
+# Filter the dataset to only include the top historical measles countries, and the USA for comparison
+top10nUSA_measles_tot <-
+  cases_year |>
+  filter(country %in% top10_yearspan_measles | country == "United States of America") |>
+  mutate(hand_incidenceR_measles = (measles_total / total_population)*1000000) #updated incidence rate
+```
+```{r}
+#Looking @ counts:
+top10measlesN_plot <-
+ggplot(data = top10nUSA_measles_tot, aes(x = year, y = measles_total)) +
+  geom_line(aes(color = country), linewidth = 1) +
+  theme_minimal()
+
+
+ggplotly(top10measlesN_plot, tooltip = c("color", "x", "y"))
+```
+
+# These Top 10 Countries: Measles Incidence rates
+```{r}
+#Looking @ Incidence rate:
+top10measlesI_plot <-
+ggplot(data = top10nUSA_measles_tot, aes(x = year, y = hand_incidenceR_measles)) +
+  #facet_wrap(~region) +
+  geom_line(aes(color = country), linewidth = 1) +
+  theme_minimal() +
+  labs(y = "Measles cases per 1,000,000")
+
+
+ggplotly(top10measlesI_plot, tooltip = c("color", "x", "y"))
+```
+
+# Over Time: Global Increase? 
+```{r}
+#| message: false
+#| warning: false
+#| include: false
+world_map <- map_data("world")
+cases_1year <- #filter to start, fix country names to show up on map
+  cases_year |>
+  filter(year == 2024) |>
+  mutate(country = if_else(country == "United States of America", 
+                           true = "USA", 
+                           false = country)) |>
+  mutate(country = if_else(country == "Russian Federation", 
+                           true = "Russia", 
+                           false = country)) |>
+  mutate(country = if_else(country == "Venezuela (Bolivarian Republic of)", 
+                           true = "Venezuela", 
+                           false = country)) |>
+  mutate(country = if_else(country == "Iran (Islamic Republic of)", 
+                           true = "Iran", 
+                           false = country)) |>
+  mutate(country = if_else(country == "Democratic People's Republic of Korea", 
+                           true = "North Korea", 
+                           false = country)) |>
+  mutate(country = if_else(country == "Bolivia (Plurinational State of)", 
+                           true = "Bolivia", 
+                           false = country)) |>
+  mutate(country = if_else(country == "United Kingdom of Great Britain and Northern Ireland", 
+                           true = "UK", 
+                           false = country)) |>
+  mutate(country = if_else(country == "Netherlands (Kingdom of the)", 
+                           true = "Netherlands", 
+                           false = country)) 
+
+
+#join the datasets:
+full_worldMeasles <- left_join(world_map, cases_1year, 
+                           join_by(region == country))
+```
+```{r}
+#plot the map:
+ggplot(data = full_worldMeasles, aes(x = long, y = lat, 
+                                 group = group)) +
+  geom_polygon(aes(fill=measles_total)) +
+  scale_fill_viridis_c() +
+  coord_map(projection = "mercator") +
+  xlim(c(-180,180)) +
+  labs(title = "Cases of Measles in 2024")
+```
+
+
