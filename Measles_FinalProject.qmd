@@ -137,11 +137,18 @@ full_worldMeasles <- left_join(world_map, cases_1year,
 #plot the map:
 ggplot(data = full_worldMeasles, aes(x = long, y = lat, 
                                  group = group)) +
-  geom_polygon(aes(fill=measles_total)) +
+  geom_polygon(aes(fill=measles_incidence_rate_per_1000000_total_population)) +
   scale_fill_viridis_c() +
   coord_map(projection = "mercator") +
   xlim(c(-180,180)) +
-  labs(caption = "Cases of Measles in 2024")
+  labs(caption = "Cases of Measles in 2024") +
+  theme_void()
+
+cases_1year <- #year filter
+      cases_year_nameAdjust |>
+      filter(year == 2024) 
+    full_worldMeasles <- left_join(world_map, cases_1year, #reappend data
+                           join_by(region == country))
 ```
 ```{r}
 #Rshiny for world map here: 
@@ -151,14 +158,19 @@ library(shiny)
 ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
+      radioButtons("disease_choice",
+                   label = "Choose the Modeled Disease:",
+                   choices = c("Measles", "Rubella")),
       sliderInput("year_choice",
                   label = "Choose a year:",
                   min = 2012, max = 2025, value = 2013),
-     # radioButtons("disease choice", 
-      #             ),
+      radioButtons("measure_choice", 
+                   label = "Choose a variable to explore:",
+                   choices = c("measles_total",
+                               "measles_incidence_rate_per_1000000_total_population")),
     ),
     mainPanel(
-      #plotOutput("global_map")
+      plotOutput("global_map")
     )
   )
 )
@@ -167,13 +179,13 @@ server <- function(input, output, session) {
   output$global_map <- renderPlot({
     cases_1year <- #year filter
       cases_year_nameAdjust |>
-      filter(year == 2024) 
+      filter(year == input$year_choice) 
     full_worldMeasles <- left_join(world_map, cases_1year, #reappend data
                            join_by(region == country))
     
     ggplot(data = full_worldMeasles, aes(x = long, y = lat, 
                                  group = group)) +
-      geom_polygon(aes(fill=measles_total)) +
+      geom_polygon(aes(fill=input$measure_choice)) +
       scale_fill_viridis_c() +
       coord_map(projection = "mercator") +
       xlim(c(-180,180)) +
