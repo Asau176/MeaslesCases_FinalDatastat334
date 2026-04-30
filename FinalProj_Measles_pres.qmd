@@ -1,5 +1,5 @@
 ---
-title: "Final Project: GLobal Measles Cases"
+title: "Exploring Global Measles Cases"
 author: "Rory Sauereisen"
 format: revealjs
 editor: visual
@@ -197,7 +197,7 @@ ggplot(data = full_worldMeasles, aes(x = long, y = lat,
 
 
 # Over Time: 
-Global Increase? 
+Global Increase?  
 ```{r}
 #| message: false
 #| warning: false
