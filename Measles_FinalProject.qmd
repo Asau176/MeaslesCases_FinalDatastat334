@@ -144,58 +144,103 @@ ggplot(data = full_worldMeasles, aes(x = long, y = lat,
   labs(caption = "Cases of Measles in 2024") +
   theme_void()
 
+
+
 cases_1year <- #year filter
       cases_year_nameAdjust |>
       filter(year == 2024) 
     full_worldMeasles <- left_join(world_map, cases_1year, #reappend data
                            join_by(region == country))
+    
+
 ```
 ```{r}
 #Rshiny for world map here: 
 library(shiny)
-
+measure_options <- colnames(cases_year)
 #make it reactive that if you choose measles, then only shows opt measles counts/variety
 ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       radioButtons("disease_choice",
                    label = "Choose the Modeled Disease:",
-                   choices = c("Measles", "Rubella")),
+                   choices = c("measles", "rubella", "other"),
+                   selected = "measles"),
       sliderInput("year_choice",
                   label = "Choose a year:",
                   min = 2012, max = 2025, value = 2013),
       radioButtons("measure_choice", 
                    label = "Choose a variable to explore:",
-                   choices = c("measles_total",
-                               "measles_incidence_rate_per_1000000_total_population")),
+                   choices = measure_options,
+                   selected = "measles_total"),
     ),
     mainPanel(
-      plotOutput("global_map")
+      plotlyOutput("global_map")
     )
   )
 )
 
 server <- function(input, output, session) {
-  output$global_map <- renderPlot({
+  # observeEvent(input$disease_choice, {
+  #   if(input$choice == "measles"){
+  #     measure_opt <- colnames(cases_year)[grepl("measles",
+  #                                colnames(cases_year))]
+  #   }
+  #   else{
+  #     measure_opt <- colnames(cases_year)[grepl("rubella",
+  #                                colnames(cases_year))]
+  #   }
+  #   })
+
+  
+  output$global_map <- renderPlotly({
     cases_1year <- #year filter
       cases_year_nameAdjust |>
       filter(year == input$year_choice) 
     full_worldMeasles <- left_join(world_map, cases_1year, #reappend data
                            join_by(region == country))
     
+    frame_map_plot<- 
     ggplot(data = full_worldMeasles, aes(x = long, y = lat, 
-                                 group = group)) +
-      geom_polygon(aes(fill=input$measure_choice)) +
+                                 group = group, label_a = region, 
+                                 label_b = total_population)) +
+      geom_polygon(aes(fill=.data[[input$measure_choice]])) +
       scale_fill_viridis_c() +
       coord_map(projection = "mercator") +
       xlim(c(-180,180)) +
-      labs(title = glue::glue("Cases of Measles in ", input$year_choice))
+      labs(title = glue::glue("Cases of Measles in ", input$year_choice)) +
+      theme_void()
+    
+    ggplotly(frame_map_plot, tooltip = c("label_a", "fill", "label_b"))
+    #do a plotly here of map. When hovering over a country, we see country name, the y-variable of choice value, & total population
   })
 }
 
 shinyApp(ui, server)
 ```
 
+```{r}
+# practice space:
+
+cases_1year <- #year filter
+      cases_year_nameAdjust |>
+      filter(year == 2024) 
+    full_worldMeasles <- left_join(world_map, cases_1year, #reappend data
+                           join_by(region == country))
+frame_map_plot<- 
+    ggplot(data = full_worldMeasles, aes(x = long, y = lat, 
+                                 group = group, label_a = region, 
+                                 label_b = total_population)) +
+      geom_polygon(aes(fill=measles_total)) +
+      scale_fill_viridis_c() +
+      coord_map(projection = "mercator") +
+      xlim(c(-180,180)) +
+      labs(title = glue::glue("Cases of Measles in 2024")) +
+      theme_void()
+    
+    ggplotly(frame_map_plot, tooltip = c("label_a", "fill", "label_b"))
+
+```
 
 
 # Measles & the U.S.:
