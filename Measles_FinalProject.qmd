@@ -188,7 +188,7 @@ server <- function(input, output, session) {
 shinyApp(ui, server)
 ```
 Reminder Note: \
-- The hand-calculated incidence rates are per 100,000 people, using the total_population value from each country. This mimics the original data set, except I did not hand calculate the discarded cases incident rate, which I left as an option. The values are the same, except for the year 2025 as my calculations use total_population while the data set uses the annualized population value for 2025. 
+- The hand-calculated incidence rates are per 1,000,000 people, using the total_population value from each country. This mimics the original data set, except I did not hand calculate the discarded cases incident rate, which I left as an option. The values are the same, except for the year 2025 as my calculations use total_population while the data set uses the annualized population value for 2025. 
 
 
 # Measles & the U.S.:
@@ -207,9 +207,19 @@ measlesUSA_plot <-
 ggplot(data = cases_year_USA, aes(x = year, y = measles_incidence_rate_per_1000000_total_population, label1 = total_population, label2 = measles_total)) +
   geom_line(linewidth = 1) +
   geom_point(aes(x = year, y = hand_incidenceR_measles), color = "purple") +
-  theme_minimal()
+  theme_minimal() +
+  labs(y = "Cases per 1,000,000")
 
-ggplotly(measlesUSA_plot, tooltip = c("y", "label1", "label2"))
+ggplotly(measlesUSA_plot, tooltip = c("y", "label1", "label2")) |>
+  layout(
+    title = list(
+      text = "Data VS hand-calculated Incidence Rates", 
+      x = 0.5,  # Center title
+      xanchor = "center",
+      font = list(size = 16)))
+
+# In purple are my hand calculations
+# In black is the data set's calculated incidence rates
 ```
 *A critical adjustment here:* \
 While investigating US incidence rates, I identified that there's an unusual value for 2025 that gives a false interpretation of a drastic increase in cases. While my hand calculation for the 2025 incidence rate reveals a rate of approximately 3.4 cases of measles per 100,000 people, the dataset reports a value of approximately 8 cases of measles per 100,000 people. My hand calculation results mirror the rest of the values in the data set except for this one 2025 value. \
@@ -231,16 +241,29 @@ USAphipp_rubellaplot <-
   ggplot(data = tester_USAphipp, aes(x= year, y = hand_incidenceR_rubella, label1 = total_population, label2 = rubella_total)) +
   geom_line(color = "purple")+
   facet_wrap(~country) +
-  labs(caption = "Rubella Incidence Rate - 2012 through spring of 2015")
+  labs(y = "Incidence Rate (per 1,000,000)")
 
 USAphipp_measlesplot <-
   ggplot(data = tester_USAphipp, aes(x= year, y = hand_incidenceR_measles, label1 = total_population, label2 = measles_total)) +
   geom_line(color = "black")+
   facet_wrap(~country) +
-  labs(caption = "Measles Incidence Rate - 2012 through spring of 2015")
+  labs(y = "Incidence Rate (per 1,000,000)")
 
-ggplotly(USAphipp_rubellaplot, tooltip = c("x", "y", "label1", "label2"))
-ggplotly(USAphipp_measlesplot, tooltip = c("x", "y", "label1", "label2"))
+ggplotly(USAphipp_rubellaplot, tooltip = c("x", "y", "label1", "label2")) |>
+  layout(
+    title = list(
+      text = "Rubella Incidence Rates - 2012 through spring 2015", # HTML tags for smaller text
+      x = 0.5,  # Center title
+      xanchor = "center",
+      font = list(size = 16)))
+
+ggplotly(USAphipp_measlesplot, tooltip = c("x", "y", "label1", "label2")) |>
+  layout(
+    title = list(
+      text = "Measles Incidence Rates - 2012 through spring 2015", # HTML tags for smaller text
+      x = 0.5,  # Center title
+      xanchor = "center",
+      font = list(size = 16)))
 ```
 Compared to the Philippines, the US has incredibly few instances of Rubella. The Philippines are showing 3 distinct peaks in yearly rubella incidence rate, with the highest instance being in 2017. Between the two diseases, it looks like Rubella mirrors the timing of its peak's with measles, but has a 3rd peak in cases in the year 2017. As with many other countries and with the measles, rubella cases seemed to phase out over the Covid-19 pandemic shutdown in 2020. The other notable difference is that the measles' last peak is in 2019 with a vast drop in the year 2020, yet with rubella cases the peak occurs in 2020 before falling in 2021. This could be due to how the disease spreads or contamination practices leading up to and during the pandemic in 2020 to 2021. \
  \
@@ -256,7 +279,7 @@ USAdk_comboplot <-
   geom_line(aes(y = hand_incidenceR_rubella), color = "purple", show.legend = TRUE)+
   geom_line(aes(y = hand_incidenceR_measles), color = "black", , show.legend = TRUE) +
   facet_wrap(~country) +
-  labs(y = "Hand-Calculated Incidence Rate (per 100,000)")
+  labs(y = "Incidence Rate (per 1,000,000)")
 
 ggplotly(USAdk_comboplot, tooltip = c("x", "y", "label1", "label2", "label3")) |>
   layout(
@@ -268,8 +291,7 @@ ggplotly(USAdk_comboplot, tooltip = c("x", "y", "label1", "label2", "label3")) |
     annotations = list(
       # Caption text
       list(
-        text = "Measles(Black),
-        Rubella(Purple)",
+        text = "Measles(Black), Rubella(Purple)",
         xref = "paper",  # relative to the entire plot area
         yref = "paper",
         x = 0,           # left side
