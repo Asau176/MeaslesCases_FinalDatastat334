@@ -144,7 +144,7 @@ ggplot(data = full_worldMeasles, aes(x = long, y = lat,
   labs(caption = "Cases of Measles in 2024") +
   theme_void()
 
-
+ 
 
 cases_1year <- #year filter
       cases_year_nameAdjust |>
