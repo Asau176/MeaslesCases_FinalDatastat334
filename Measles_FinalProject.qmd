@@ -5,23 +5,17 @@ format:
   html:
     embed-resources: true
 ---
-#*CURRENT BUGS:*
-- can't get my measure options to change successfully
-- weird axis settings for my map
-
-
-
-The purpose of this final project is to explore a dataset of choice/interest and showcase data story telling abilities.
-
+The purpose of this final project is to explore a data set of choice/interest and showcase data story telling abilities.  \
+Course: St. Lawrence University, Data Visualizations II.  \
+  \
 # Introduction
 It begins with a rash on the face, spreading to the chest and back before the rest of the body, combined with fever (up to 105F), a dry cough, runny nose, and conjunctivitis. Highly contagious through airborne and physical contact routes, people of any age can contract a virus called Measles. While children are more often exposed to & contract Measles, in most cases a patient is bedridden for 7-10 days. For the immune compromised and those with complications though, this can be a life threatening disease and needs medical monitoring to limit life-threatening complications. However, with the first vaccines developed and licensed in 1963, the U.S. all but declared the Measles virus eliminated in the U.S. by the year 2000. \
 \
 But as current media campaigns warn, Measles has all but renewed it's presence in the U.S.; -with alarming foothold. This blog entry aims to explore a data set sourced from the GitHub repository 'TidyTuesday' covering global Measles case data. Exploring global performance in addition to examining U.S. specific rates, this blog will aim to visualize Measles's presence in the world. \
-**Today's Goals:**
-- What are the top 10 countries with the highest record cases of Measles? How does the USA compare to these countries?
-- Throughout the data's timeline of measles counts, is there any evidence of historical impacts? 
-- Are we able to reveal differences in healthcare quality between regions/countries, based on observing their ratios of laboratory to suspected- confirmed cases of disease? (Does the ratio of laboratory-confirmed cases to total cases reveal differences in healthcare capacity across countries?)
- - Is there a trend in measles vs rubella prominence? Does this show up regionally or by country, suggesting environmental or public health influences?
+**Abbreviated: Questions in this Report:**
+- What are the top 10 countries with the highest record cases of Measles? How does the USA compare to these countries?  \
+- Throughout the data's timeline of measles counts, is there any evidence of historical impacts?   \
+ - Is there a trend in measles vs rubella prominence? Does this show up regionally or by country, suggesting environmental or public health influences?  \
 
 
 *Read in the data:*
@@ -106,9 +100,6 @@ While laboratory confirmed cases are most preferred, it can be difficult given a
 
 
 # Global Visualization: 2024 to 2025 Measles increase or decrease
-world map, diverging color scale. Use month by month case counts, Net increase or Net decrease since 2024 measles case benchmark? 
-
-Do global map of 2024 cases, then 2025 cases. see who has most
 do a Rshiny for world map? You get to chose year and incidence rate or total counts, or lab confirmed counts? 
 ```{r}
 # Skeleton map to see in Rshiny:
@@ -206,8 +197,8 @@ server <- function(input, output, session) {
 
 shinyApp(ui, server)
 ```
-Notes: \
-- The hand-calculated incidence rates are per 100,000 people, using the total_population value from each country. This mimics the original dataset, except I did not hand calculate the discarded cases incident rate, which I left as an option. The values are the same, except for the year 2025 as my calculations use total_population while the data set uses the annualized population value for 2025. 
+Reminder Note: \
+- The hand-calculated incidence rates are per 100,000 people, using the total_population value from each country. This mimics the original data set, except I did not hand calculate the discarded cases incident rate, which I left as an option. The values are the same, except for the year 2025 as my calculations use total_population while the data set uses the annualized population value for 2025. 
 
 
 # Measles & the U.S.:
@@ -235,71 +226,17 @@ ggplotly(measlesUSA_plot, tooltip = c("y", "label1", "label2"))
   \
 Regardless of the 2025 incidence rate value, this plotly line plot delivers the same message; the return in Measles cases after the 2020 pandemic like the rest of the globe. However, just how bad is measles getting in the US? \
 \
-The data set currently visualized here is from a github repository dating from April 24, 2025, about a year ago from now, and only reports on country-level counts. While it warns of an increasing trend after Covid-19, it doesn't capture the increasing concern since that date, and at a global level at that. I've pulled here supplementary data from the CDC to get a glimpse at the more current case counts and rates of measles cases to gain a better understanding of the U.S.'s current standing with the disease. \
+The data set currently visualized here is from a github repository dating from April 24, 2025, about a year ago from now, and only reports on country-level counts. While it warns of an increasing trend after Covid-19, it doesn't capture the increasing concern since that date, and at a global level at that. Next steps for this project would include pulling up supplementary data from the CDC to get a glimpse at the more current rates of measles cases. Gaining a better understanding of the U.S.'s current standing with the disease would make this report more impactful. \
   \
 
 
 # Measles vs Rubella: Trends in co-existence(?)
-While measles is known as a more classic disease or sickness, rubella compares in a similar sense of symptoms but gains its notoriety for its harmful impact on unborn children. If a woman is to contract rubella during pregnancy, the child is likely to be born with defects, known as ____ syndrome.  \
-While there is data on most countries, I'll only be focusing on the US rates and the Philipines, for relatability and since the philipines seem to have the most frequent spikes in Measles cases. In the top countries with the highest measles prevalence, how does their rubella count compare to their measles count? The gitHub data set includes rubella counts in addition to measles. Taking advantage of the extra information, lets visualize: \
-Pick a year and boxplots? 
+While measles is well known for its rash, severe sickness, and contagious nature, Rubella is lesser known. While sharing the symptom of a rash and viral nature, Rubella is harder to contract and commonly has few or no symptoms. However, it gains its notoriety for its harmful impact on unborn children. If a woman is to contract rubella during pregnancy, it can cause a miscarriage, stillbirth, or defects known as Congenital Rubella Syndrome.\
+While there is data on most countries, I'll only be focusing on the US rates and the Philippines, for easier comparison since the Philippines seem to have the most frequent spikes in Measles cases. Using the Phillipines and the US for comparison, how does their rubella count compare to their measles count? Taking advantage of the extra Rubella information in this data set, lets visualize: \
 ```{r}
-#pivot the data
-rubVmeas_USAPhipp <-
-  cases_year |>
-  select(region, country, year, total_population, measles_total, rubella_total) |>
-  pivot_longer(cols = c(measles_total, rubella_total),
-             names_to = "disease", values_to = "total_cases") |>
-  select(total_cases, disease, everything()) |>
-  filter(country == "United States of America" | country == "Denmark")  #Philippines
-
-unique(rubVmeas_USAPhipp$country)
-
-ggplot(data = rubVmeas_USAdata, aes(x = year, y = total_cases, color = disease, label1 = total_population)) +
-  geom_line(linewidth = 1) +
-  #facet_wrap(~ country) +
-  theme_minimal()
-#needs finishing
-
-
 tester_USAphipp<- 
   cases_year |>
   filter(country == "United States of America" | country == "Philippines")  
-
-USAphipp_rubellaplot <-
-  ggplot(data = tester_USAphipp, aes(x= year, label1 = total_population, label2 = rubella_total, label3 = measles_total)) +
-  geom_line(aes(y = hand_incidenceR_rubella), color = "purple", show.legend = TRUE)+
-  geom_line(aes(y = hand_incidenceR_measles), color = "black", , show.legend = TRUE) +
-  facet_wrap(~country) +
-  labs(caption = "Rubella Incidence Rate - 2012 through spring of 2015
-       Black - Measles,
-       Purple - Rubella",
-       y = "hand Calculated Incidence Rate (per 100,000)")
-
-USAphipp_measlesplot <-
-  ggplot(data = tester_USAphipp, aes(x= year, y = hand_incidenceR_measles, label1 = total_population, label2 = measles_total)) +
-  geom_line(color = "purple")+
-  facet_wrap(~country) +
-  labs(caption = "Measles Incidence Rate - 2012 through spring of 2015")
-
-ggplotly(USAphipp_rubellaplot, tooltip = c("x", "y", "label1", "label2", "label3")) |>
-  layout(
-    title = list(
-      text = "TITLE HERE", # HTML tags for smaller text
-      x = 0.5,  # Center title
-      xanchor = "center"
-    ))
-
-
-ggplotly(USAphipp_measlesplot, tooltip = c("x", "y", "label1", "label2"))
-
-```
-Compared to the Philippines, the US has incredibly few instances of Rubella. The Phillipines are showing 3 distinct peaks in yearly rubella incidence rate, with the highest instance being in 2017. Between the two diseases, it looks like Rubella mirrors the timing of its peak's with measles, but has a 3rd peak in cases in the year 2017. As with many other countries and with the measles, rubella cases seemed to phase out over the Covid-19 pandemic shutdown in 2020. The other notable difference is that the measles' last peak is in 2019 with a vast drop in the year 2020, yet with rubella cases the peak occurs in 2020 before falling in 2021. This could be due to how the disease spreads or contamination practices leading up to and during the pandemic in 2020 to 2021. \
-Since the Phillippines have many more cases than the US though, the US distribution here gets washed out due to the y-axis scale. Due to personal fondness of Denmark, let's compare & contrast Denmark's disease history with the US:
-```{r}
-tester_USAphipp<- 
-  cases_year |>
-  filter(country == "United States of America" | country == "Denmark")  #| country == "Philippines"
 
 USAphipp_rubellaplot <-
   ggplot(data = tester_USAphipp, aes(x= year, y = hand_incidenceR_rubella, label1 = total_population, label2 = rubella_total)) +
@@ -316,26 +253,71 @@ USAphipp_measlesplot <-
 ggplotly(USAphipp_rubellaplot, tooltip = c("x", "y", "label1", "label2"))
 ggplotly(USAphipp_measlesplot, tooltip = c("x", "y", "label1", "label2"))
 ```
+Compared to the Philippines, the US has incredibly few instances of Rubella. The Philippines are showing 3 distinct peaks in yearly rubella incidence rate, with the highest instance being in 2017. Between the two diseases, it looks like Rubella mirrors the timing of its peak's with measles, but has a 3rd peak in cases in the year 2017. As with many other countries and with the measles, rubella cases seemed to phase out over the Covid-19 pandemic shutdown in 2020. The other notable difference is that the measles' last peak is in 2019 with a vast drop in the year 2020, yet with rubella cases the peak occurs in 2020 before falling in 2021. This could be due to how the disease spreads or contamination practices leading up to and during the pandemic in 2020 to 2021. \
+Since the Philippines have many more cases than the US though, the US distribution here gets washed out due to the y-axis scale. Due to personal fondness of Denmark, and the case counts being closer to the US's, let's compare & contrast Denmark's disease history with the US:
+```{r}
+#combo plot:
+subdata_USAdk<- 
+  cases_year |>
+  filter(country == "United States of America" | country == "Denmark")  #| country == "Philippines"
 
+USAdk_comboplot <-
+  ggplot(data = subdata_USAdk, aes(x= year, label1 = total_population, label2 = rubella_total, label3 = measles_total)) +
+  geom_line(aes(y = hand_incidenceR_rubella), color = "purple", show.legend = TRUE)+
+  geom_line(aes(y = hand_incidenceR_measles), color = "black", , show.legend = TRUE) +
+  facet_wrap(~country) +
+  labs(y = "Hand-Calculated Incidence Rate (per 100,000)")
+
+ggplotly(USAdk_comboplot, tooltip = c("x", "y", "label1", "label2", "label3")) |>
+  layout(
+    title = list(
+      text = "Disease Incidence Rates - 2012 through spring 2015", # HTML tags for smaller text
+      x = 0.5,  # Center title
+      xanchor = "center",
+      font = list(size = 16)),
+    annotations = list(
+      # Caption text
+      list(
+        text = "Measles(Black),
+        Rubella(Purple)",
+        xref = "paper",  # relative to the entire plot area
+        yref = "paper",
+        x = 0,           # left side
+        y = -0.15,       # below the x-axis
+        showarrow = FALSE,
+        font = list(size = 12, color = "gray1"),
+        align = "left")
+      ))
+```
+When comparing the US to Denmark now, we're now able to better capture the ebbs and flows present in the US. Both Denmark and the USA have the Covid-19 pandemic drop in 2020, and have Rubella rates consistently at zero. Their patterns of measles incident rates almost mirror each other after 2016 as well, but it's important to consider how there is some missing data for the US. This data set provides no measles data for the US until 2014, skipping 2015, before providing yearly rates up through spring of 2025. So while at first glance its a near exact match in pattern, the Danish Measles case data starts at 2012 while the US's starts at 2014-ish-2016. \
 
 
 # Conclusions
-- Historical Impact Visualization:
-We *were* able to see some world history by looking at the line plots of measles cases over time. There's a widespread drop in Measles cases right as the Covid-19 pandemic hit in 2020, with cases returning soon after that rough 2 year time period. 
+- **Top 10 Countries With the Largest Measles Outbreak:** \
+This visualization displayed how the top 10 countries with the largest outbreaks aren't all consistent. One by one they had their turn of an outbreak, with only a few countries having repeat smaller outbreaks. This also showed that in comparison to the rest of the Globe, the US has fared pretty well in preventing a mass outbreak of Measles. But, it also warns that outbreaks are very possible, and Measles remains a consistent threat to public health in the globe. 
 
-- Global Trends:
-While this data set doesn't display the occurrence of a Measles pandemic, it does display the frequent outbreaks occuring across the globe. Most countries seem to only experience one or two outbreaks, followed by relatively consistent low counts; a lesson learned. What this suggests for the US is to stay ahead of the game in terms of Measles prevention. Let's *not* wait for an outbreak before giving this infectious disease proper management. If almost all countries have observed an outbreak, the US can expect one sooner or later as well. Since global Measles presence is consistent over time, then attentive Measles management should be continuous as well. This data is a cautionary tale of staying on top of disease management.
+- **Historical Impact Visualization:**\
+We *were* able to see some world history by looking at the line plots of measles cases over time. There's a widespread drop in Measles cases right as the Covid-19 pandemic hit in 2020, with cases returning soon after that rough 2 year time period.  \
+ \
+- **Global Trends:**  \
+While this data set doesn't display the occurrence of a Measles pandemic, it does display the frequent outbreaks occuring across the globe. Most countries seem to only experience one or two outbreaks, followed by relatively consistent low counts; a lesson learned. What this suggests for the US is to stay ahead of the game in terms of Measles prevention. Let's *not* wait for an outbreak before giving this infectious disease proper management. If almost all countries have observed an outbreak, the US can expect one sooner or later as well. Since global Measles presence is consistent over time, then attentive Measles management should be continuous as well. This data is a cautionary tale of staying on top of disease management. \
+ \
+ \
+- **Rubella vs Measles Presence:** \
+This exploration showed us that it varies by country on whether or not Rubella rates mirror Measles cases. This could be due to a difference in disease presence, vaccination rates, or reporting accuracy. Since rubella typically shows no symptoms, the Rubella cases could be off due to under reporting. Or, truly it's the disease is less common than measles in that region. More data and research in this area would be needed to answer that. \
 
-
-
-# Notes:
--> **Incorrect Incidence rate data**. While investigating US measles incidence rate over time (`measles_incidence_rate_per_1000000_total_population` variable), I discovered that the 2025 value was incorrect. In hand calculating the yearly incidence rates for the US, all were correct except the 2025 value. Unsure of how the data authors calculated their values to identify the calculation that produced it, I chose not to use the current column for measles incidence rate in the 'case_year' data set.  \
-- If given more time, I would more thoroughly investigate the reason behind Madagascar's high rates of Measles. \
-- With more time, I'd add a section called "Current Glimpse: 2025-26 U.S. Measles Cases". It'd investigate more up to data/recent data on measles cases in the US, as well as examine vaccine counts. I'd separate rates by state and do state map visualizations(diverging color scale based on increase in counts or decrease & by how much), boxplots, and month by month line plots with region of the US. 
-- I'd also like to further my shiny app by adding an additional visualization that allows you to see the case confirmation distribution for a specific country & year. 
-
-## Sources:
-**Main data set explored:** \
+# Notes: 
+-> **Incorrect Incidence rate data**. While investigating US measles incidence rate over time (`measles_incidence_rate_per_1000000_total_population` variable), I discovered that the 2025 value was incorrect. In hand calculating the yearly incidence rates for the US, all were correct except the 2025 value. I chose not to use the pre-calculated column for measles incidence rate in the 'case_year' data set in my visualizations. How the Authors had calculated their 2025 incidence rate value was by using the `annualized_population_most_recent_year_only` variable, which gave more of a predictive value for 2025 than a 'current-standing' one. For consistency reasons and at the advice of professors, I used the total_population for 2025 instead in my incidence rate calculations.  \
+ \
+ \
+### Future Directions: 
+- With more time, I'd add a section called "Current Glimpse: 2025-26 U.S. Measles Cases". It'd investigate more up to data/recent data on measles cases in the US, as well as examine vaccine counts. I'd separate rates by state and do state map visualizations(diverging color scale based on increase in counts or decrease & by how much), box plots, and month by month line plots with region of the US. \
+- I'd also like to further my shiny app by adding an additional visualization that allows you to see the case confirmation distribution for a specific country & year. I'd really like to take advantage of the data's case confirmation type information to try and investigate the strength of public health resources/health care system by region or country. \
+- I'd also like to explore what the top 10 countries with the highest *average* measles cases over time are. My current visualizations look at record-high counts over the time window, but I'd like to see what countries may struggle with measles the most. Further looking at the case confirmation distribution could give further insight as to why there could be struggles as well. \
+ \
+ \
+# Sources:
+**Data set explored:** \
 'Measles cases across the world', posted 2025-06-24  \
 Chosen from TidyTuesday GitHub repository. Contains information on global Measles and Rubella cases.  \
 Data set temporal range: 2012 - 2025 \
@@ -345,6 +327,7 @@ Link: (https://github.com/rfordatascience/tidytuesday/tree/main/data/2025/2025-0
 **AI Use Statement:**
 To aid me in adding captions to my plotly graphs, I have used AI for this project. \
 Query: "Using R studio, how to show my captions in a plotly() plot"  \
+AI model: Microsoft Copilot Search  \
 What I used:  Discovered piping into the layout() function!(didn't realize I could pipe after a plotly()). I applied the 'title=' and 'annotations=' items within the function. Also referenced the example's specifics to help center/orient my captions on the graph. \
  \
  \
