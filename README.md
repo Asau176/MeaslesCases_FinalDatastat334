@@ -16,17 +16,17 @@ cases_year <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience
 
 
 ### Data
-The data used for this project was pulled from the TidyTuesday Github repository, posted April 24th, 2025, and titled "Measles cases across the world". 
-It contains Measles and Rubella disease counts for various countries, with data ranging from 2012 through April of 2025.
-Case counts are further divided by level of certainty of disease identification, and an incidence rate for each year is also provided. 
-
-
+The data used for this project was pulled from the TidyTuesday Github repository, posted June 24th, 2025, and titled "Measles cases across the world".  \
+It contains Measles and Rubella disease counts for various countries, with data ranging from 2012 through June of 2025. \
+Case counts are further divided by level of certainty of disease identification, and an incidence rate for each year is also provided.  \
+ \
+ \
 ### Questions
-- What are the top 10 countries with the highest record cases of Measles? How does the USA compare to these countries?
-- Did the Covid-19 Pandemic have an impact on Measles cases?
-- Is there a visible rise in Global Measles cases since 2012?
-- In terms of Measles cases, how is the US doing compared to other countries?
-
+- What are the top 10 countries with the highest record cases of Measles? How does the USA compare to these countries? \
+- Did the Covid-19 Pandemic have an impact on Measles cases? \
+- Is there a visible rise in Global Measles cases since 2012? \
+- In terms of Measles cases, how is the US doing compared to other countries? \
+ \
 ### Timeline History of Countries With the Largest Measles Outbreaks
 ```{r}
 #Top 10 countries that have had the record highest total measles cases during the span of 2012 - 2025:
@@ -56,8 +56,8 @@ ggplot(data = top10nUSA_measles_tot, aes(x = year, y = hand_incidenceR_measles))
 
 ggplotly(top10measlesI_plot, tooltip = c("color", "x", "y"))
 ```
-Incidence rate was used as the disease measure (opposed to plain case counts) as it provides a value that's adjusted for each country's respective population size.
-From this line plot, it seems like countries "take turns" having outbreaks, opposed to a high-count, sustained level of measles cases.
+Incidence rate was used as the disease measure (opposed to plain case counts) as it provides a value that's adjusted for each country's respective population size. \
+Referencing this line plot, it seems like countries "take turns" having outbreaks, opposed to a high-count, sustained level of measles cases. \
 From a historical lens, there's also a notable collective dip in Measles cases right as the Covid-19 Pandemic hit. This drop in cases could be due to social distancing, increased sanitary practices, or under reporting cases.
 Madagascar's surging peak in 2019 is currently the largest Measles outbreak on record, and was primarily caused by a lack of immunization/herd immunity.
 The US in comparison to the top 10 countries has a minute amount of Measles cases, so in comparison to the globe, the US is managing measles more effectively.
@@ -109,11 +109,11 @@ ggplot(data = full_worldMeasles, aes(x = long, y = lat,
   labs(caption = "Cases of Measles in 2024") +
   theme_void()
 ```
-This is a sample map of what can be created within this project's Rshiny App. This has the parameters of year 2024 and the total number of measles cases per country shown.
+This is a sample map of what can be created within this project's Rshiny App. This has the parameters of year 2024 and the total number of measles cases per country shown. \
 Panning through the app, we can visually assume that Measles isn't increasing in global prevalence. While each country has its outbreaks, some occurring more frequently than others, this data set doesn't display or suggest a Measles Pandemic. 
-Within this Shiny app, you can select for year, disease, and the fill variable for the map. The options range from incidence rate to total counts, to varying case confirmation types.
-It was created with the purpose of users exploring their own curiosities about the data.  
-
+Within this Shiny app, you can select for year, disease, and the fill variable for the map. The options range from incidence rate to total counts, to varying case confirmation types. \
+It was created with the purpose of users exploring their own curiosities about the data.  \
+ \
 ## US vs Denmark
 ```{r}
 subdata_USAdk<- 
@@ -148,8 +148,8 @@ ggplotly(USAdk_comboplot, tooltip = c("x", "y", "label1", "label2", "label3")) |
         align = "left")
       ))
 ```
-In comparison to the globe, the US is managing measles well. But, the large outbreak numbers is visually drowning out the US's measles presence. 
-This visualization compares the US to Denmark, due to a personal fondness of Denmark and a similarity in total case counts, so that we can view a disease pattern. 
+In comparison to the globe, the US is managing measles well. But, the large outbreak numbers is visually drowning out the US's measles presence.  \
+This visualization compares the US to Denmark, due to a personal fondness of Denmark and a similarity in total case counts, so that we can view a disease pattern. \
 Both Denmark and the USA have the Covid-19 pandemic drop in 2020, and have Rubella rates consistently at zero. Their patterns of measles incident rates almost mirror each other after 2016 as well, but it's important to consider how there is some missing data for the US. 
 This data set provides no measles data for the US until 2014, skipping 2015, before providing yearly rates up through spring of 2025. So while at first glance its a near exact match in pattern, the Danish Measles case data starts at 2012 while the US's starts at 2014-ish-2016.
 
