@@ -14,7 +14,7 @@ It begins with a rash on the face, spreading to the chest and back before the re
 \
 But as current media campaigns warn, Measles has all but renewed it's presence in the U.S.; -with alarming foothold. This blog entry aims to explore a data set sourced from the GitHub repository 'TidyTuesday' covering global Measles case data. Exploring global performance in addition to examining U.S. specific rates, this blog will aim to visualize Measles's presence in the world. \
  \
-**Abbreviated: Questions in this Report:** \
+**Abbreviated: Questions explored in this Report:** \
 - What are the top 10 countries with the highest record cases of Measles? How does the USA compare to these countries?  \
 - Throughout the data's timeline of measles counts, is there any evidence of historical impacts?   \
  - Is there a trend in measles vs rubella prominence? Does this show up regionally or by country, suggesting environmental or public health influences?  \
@@ -26,7 +26,8 @@ But as current media campaigns warn, Measles has all but renewed it's presence i
 #| warning: false
 library(tidyverse)
 library(dplyr)
-cases_month <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-06-24/cases_month.csv')
+#cases_month <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-06-24/cases_month.csv')
+# ^wasn't used in this analysis
 cases_year <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-06-24/cases_year.csv') |>
   mutate(hand_incidenceR_measles = (measles_total / total_population)*1000000)  |> #updated incidence rates
   mutate(hand_incidenceR_rubella = (rubella_total / total_population)*1000000)     
@@ -225,13 +226,13 @@ ggplotly(measlesUSA_plot, tooltip = c("y", "label1", "label2")) |>
 While investigating US incidence rates, I identified that there's an unusual value for 2025 that gives a false interpretation of a drastic increase in cases. While my hand calculation for the 2025 incidence rate reveals a rate of approximately 3.4 cases of measles per 100,000 people, the dataset reports a value of approximately 8 cases of measles per 100,000 people. My hand calculation results mirror the rest of the values in the data set except for this one 2025 value. \
     This is reflected in the graph as the black line with data-original values and purple plotted points to represent my hand calculations to check it. The difference is due to the original data using the annualized population opposed to total population for only the year 2025. To limit misinterpretations and maintain consistency across reported values, all visualizations in this report will use my hand-calculated incidence rate values (the purple points) that not utilize the country-wide 2025 annualized population values. (The above section examining global counts incorporates this same adjustment to relying on my personal calculations) \
   \
-Regardless of the 2025 incidence rate value, this plotly line plot delivers the same message; the return in Measles cases after the 2020 pandemic like the rest of the globe. However, just how bad is measles getting in the US? Unfortunately, this data set cannot give an up-to-date answer, as it only ranges up to April of 2025. If curious, see the 'Future Notes' section at the end of the report to hear my thoughts on this.\
+Regardless of the 2025 incidence rate value, this plotly line plot delivers the same message; the return in Measles cases after the 2020 pandemic like the rest of the globe. However, just how bad is measles getting in the US? Unfortunately, this data set cannot give an up-to-date answer, as it only ranges up to June of 2025. If curious, see the 'Future Notes' section at the end of the report to hear my thoughts on this.\
   \
 
 
 # Measles vs Rubella: Trends in co-existence(?)
 While measles is well known for its rash, severe sickness, and contagious nature, Rubella is lesser known. While sharing the symptom of a rash and viral nature, Rubella is harder to contract and commonly has few or no symptoms. However, it gains its notoriety for its harmful impact on unborn children. If a woman is to contract rubella during pregnancy, it can cause a miscarriage, stillbirth, or defects known as Congenital Rubella Syndrome.\
-    While there is data on most countries, I'll only be focusing on the US rates and the Philippines, for easier comparison since the Philippines seem to have the most frequent spikes in Measles cases. Using the Phillipines and the US for comparison, how does their rubella count compare to their measles count? Taking advantage of the extra Rubella information in this data set, lets visualize: \
+    While there is data on most countries, I'll only be focusing on the US rates and the Philippines, for easier comparison since the Philippines seem to have the most frequent spikes in Measles cases. Using the Philippines and the US for comparison, how does their rubella count compare to their measles count? Taking advantage of the extra Rubella information in this data set, lets visualize: \
 ```{r}
 tester_USAphipp<- 
   cases_year |>
@@ -320,6 +321,7 @@ This exploration showed us that it varies by country on whether or not Rubella r
 # Notes: 
 -> **Incorrect Incidence rate data**. While investigating US measles incidence rate over time (`measles_incidence_rate_per_1000000_total_population` variable), I discovered that the 2025 value was incorrect. In hand calculating the yearly incidence rates for the US, all were correct except the 2025 value. I chose not to use the pre-calculated column for measles incidence rate in the 'case_year' data set in my visualizations. How the Authors had calculated their 2025 incidence rate value was by using the `annualized_population_most_recent_year_only` variable, which gave more of a predictive value for 2025 than a 'current-standing' one. For consistency reasons and at the advice of professors, I used the total_population for 2025 instead in my incidence rate calculations.  \
  \
+ -> I find this important to mention, as identifying, accurately displaying, and obtaining resources/opinions on it soaked up a lot of time while completing this project. While the visualization for and conclusion about this hiccup don't greatly alter report conclusions, it did significantly add to how I interacted with the data, and how I interpreted this "story" on global measles cases. \
 
 ### Future Directions: 
 - With more time, I'd add a section called "Current Glimpse: 2025-26 U.S. Measles Cases". It'd investigate more up to data/recent data on measles cases in the US, as well as examine vaccine counts. I'd separate rates by state and do state map visualizations(diverging color scale based on increase in counts or decrease & by how much), box plots, and month by month line plots with region of the US. \
